@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+{% block tittle%}libros{% endblock %}
+{% block contenido %}
+
+<body>
+    <div class="container">
+        <button class="btn btn-primary btn-sm mr-1"><a href="{% url 'correspondencia_por_sigla' sigla='C' %}"
+                style="color:white;">Filtrar por CI</a></button>
+        <button class="btn btn-primary btn-sm mr-1"><a href="{% url 'correspondencia_por_sigla' sigla='Z' %}"
+                style="color:white;">Filtrar por Z.AND</a></button>
+        <button class="btn btn-primary btn-sm mr-1"><a href="{% url 'correspondencia_por_sigla' sigla='G' %}"
+                style="color:white;">Filtrar por G.AND</a></button>
+        <br>
+        <br>
+        <div class="card" style="width:18 rem;">
+            <div class="card-body">
+                <h5 class="card-title">Libros de Correspondencia</h5>
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm">
+                        <thead>
+                            <tr>
+                                <th scope="row" class="small">#</th>
+                                <th scope="col" class="small">Sigla</th>
+                                <th scope="col" class="small">Numero</th>
+                                <th scope="col" class="small">Tipo Documento</th>
+                                <th scope="col" class="small">Numero documento</th>
+                                <th scope="col" class="small">fecha solicitud</th>
+                                <th scope="col" class="small">fecha entrada</th>
+                                <th scope="col" class="small">Remitente o Destinatario</th>
+                                <th scope="col" class="small">Importancia</th>
+                                <th scope="col" class="small">Dirección</th>
+                                <th scope="col" class="small">Nombre Destinatario/remitente</th>
+                                <th scope="col" class="small">Asunto</th>
+                                <th scope="col" class="small">Proceso</th>
+                                <th scope="col" class="small">Quien Firma el Documento</th>
+                                <th scope="col" class="small">Quien Solicita / Recibe </th>
+                                <th scope="col" class="small">Salida</th>
+                                <th scope="col" class="small">Registro De Entrega</th>
+                                <th scope="col" class="small">Observaciones</th>
+                                <th scope="col" class="small"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for libro in libros %}
+                            <tr>
+                                <td>{{ libro.id }}</td>
+                                <td>{{ libro.sigla }}</td>
+                                {% if libro.sigla == "Z"%}
+                                <td>{{ libro.zand.id }}</td>
+                                {% elif libro.sigla == "G" %}
+                                <td>{{ libro.gand.id }}</td>
+                                {% elif libro.sigla == "C" %}
+                                <td>{{ libro.ci.id }}</td>
+                                {% else %}
+                                <td>ID desconocido</td>
+                                {% endif %}
+                                <td>{{ libro.tipo_documento }}</td>
+                                <td>{{ libro.numero_documento }}</td>
+                                <td>
+                                    {{ libro.fecha_solicitud| date:"d/m/Y" }} {{ libro.fecha_solicitud|time:"H:i:s" }}
+                                </td>
+                                <td>
+                                    {{ libro.fecha_entrada| date:"d/m/Y" }} {{ libro.fecha_entrada|time:"H:i:s" }}
+                                </td>
+                                <td>
+                                    {{ libro.remitente_destinatario }}
+                                </td>
+                                <td>
+                                    {{ libro.importancia }}
+                                </td>
+                                <td>
+                                    {{ libro.direccion }}
+                                </td>
+                                <td>
+                                    {{ libro.nombre_destinatario_remitente }}
+                                </td>
+                                <td>
+                                    {{ libro.asunto }}
+                                </td>
+                                <td>
+                                    {{ libro.proceso }}
+                                </td>
+                                <td>
+                                    {{ libro.quien_firma }}
+                                </td>
+                                <td>
+                                    {{ libro.quien_solicita_recibe }}
+                                </td>
+                                <td>
+                                    {{ libro.salida| date:"d/m/Y" }} {{ libro.salida|time:"H:i:s" }}
+                                </td>
+                                <td>
+                                    {{ libro.registro_de_entrega }}
+                                </td>
+                                <td>
+                                    {{ libro.observaciones }}
+                                </td>
+                                <td class="small">
+                                     
+                                </td>
+
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <nav aria-label="...">
+                        <ul class="pagination pagination-sm justify-content-end">
+                            {% if libros.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?pagina={{ libros.previous_page_number }}" tabindex="-1"
+                                    aria-disabled="true">Anterior</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link" tabindex="-1" aria-disabled="true">Anterior</span>
+                            </li>
+                            {% endif %}
+
+                            {% for num_pagina in libros.paginator.page_range %}
+                            {% if libros.number == num_pagina %}
+                            <li class="page-item active" aria-current="page">
+                                <span class="page-link">{{ num_pagina }}<span class="sr-only">(current)</span></span>
+                            </li>
+                            {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="?pagina={{ num_pagina }}">{{ num_pagina }}</a>
+                            </li>
+                            {% endif %}
+                            {% endfor %}
+
+                            {% if libros.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?pagina={{ libros.next_page_number }}">Siguiente</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">Siguiente</span>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+
+                </div>
+            </div>
+            <div>
+            </div>
+            {% block scripts %}
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.js"></script>
+            <script>
+                $(document).ready(function () {
+                    // Mostrar ventana modal al hacer clic en el botón de eliminar
+                    $('.eliminar-btn').click(function (e) {
+                        e.preventDefault(); // Evitar que se siga el enlace
+                        var url = $(this).data('url'); // Obtener la URL de eliminación
+                        Swal.fire({
+                            title: '¿Estás seguro?',
+                            text: "Esta acción no se puede deshacer",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'Sí, eliminar',
+                            cancelButtonText: 'Cancelar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // Redirigir al usuario a la URL de eliminación y mostrar mensaje de éxito
+                                $.ajax({
+                                    type: 'POST',
+                                    url: url,
+                                    data: {
+                                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                                        eliminar: 'si'
+                                    },
+                                    success: function () {
+                                        Swal.fire({
+                                            title: 'Eliminado!',
+                                            text: 'El objeto se eliminó correctamente.',
+                                            icon: 'success',
+                                            confirmButtonColor: '#3085d6',
+                                            confirmButtonText: 'OK'
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                window.location.href = '/libros/';
+                                            }
+                                        });
+                                    }
+                                });
+                            } else {
+                                // Redirigir al usuario a la página anterior
+                                window.location.href = '/libros/';
+                            }
+                        });
+                    });
+                });
+            </script>
+            {% endblock %}
+</body>
+{% endblock %}
