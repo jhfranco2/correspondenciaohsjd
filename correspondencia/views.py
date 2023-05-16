@@ -1,3 +1,5 @@
 from django.shortcuts import render
 
-# Create your views here.
+#Vista del inicio
+def inicio(request):
+    return render(request,'libros/inicio.html')

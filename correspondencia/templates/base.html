@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <title> {% block titulo %} {% endblock %}</title>
+    <!--Carga de archivos CSS de bootstrap-->
+    {% load bootstrap4 %}
+    {% bootstrap_css %}
+    <!--Carga de jquery-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand navbar-light bg-light">
+        <div class="nav navbar-nav">
+            <a class="nav-item nav-link active" href="{%  url 'inicio' %}" aria-current="page">Inicio </a>
+            <a class="nav-item nav-link active" href="#" aria-current="page">Correspondencia </a>
+            <a class="nav-item nav-link active" href="#" aria-current="page">Reportes</a>
+        </div>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <br />
+                {% block contenido %}{% endblock %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <footer>
+            <br>
+            <p>&copy; 2023 Jhoan Mateo Franco Vargas. Todos los derechos reservados.</p>
+        </footer>
+    </div>
+    {% bootstrap_javascript %}
+</body>
+
+</html>
