@@ -4,6 +4,8 @@
 
 <body>
     <div class="container">
+        <button class="btn btn-primary btn-sm mr-1"><a href="{% url 'crear' %}"
+            style="color:white;">Agregar</a></button>
         <button class="btn btn-primary btn-sm mr-1"><a href="{% url 'correspondencia_por_sigla' sigla='C' %}"
                 style="color:white;">Filtrar por CI</a></button>
         <button class="btn btn-primary btn-sm mr-1"><a href="{% url 'correspondencia_por_sigla' sigla='Z' %}"
@@ -96,7 +98,13 @@
                                     {{ libro.observaciones }}
                                 </td>
                                 <td class="small">
-
+                                    <div class="d-flex justify-content-between btn-group">
+                                        <button class="btn btn-secondary btn-sm mr-1"><a
+                                                href="{% url 'editar' id=libro.id %}"
+                                                class="text-white">Editar</a></button>
+                                        <button class="btn btn-danger btn-sm eliminar-btn"
+                                            data-url="{% url 'eliminar' id=libro.id %}">Eliminar</button>
+                                    </div>
                                 </td>
 
                             </tr>
