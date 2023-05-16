@@ -8,4 +8,6 @@ urlpatterns = [
    path('crear',views.crear,name='crear'),
    path('editar/<int:id>/', views.editar, name='editar'),
    path('eliminar/<int:id>/', views.eliminar, name='eliminar'),
+   path('reportes', views.reportes,name='reportes'),
+   path('generar-reporte-mensajeria',views.generar_reporte_mensajeria,name='generar-reporte-mensajeria'),
 ]

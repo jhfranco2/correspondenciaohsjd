@@ -53,3 +53,10 @@ class LibroForm(forms.ModelForm):
             'registro_de_entrega': forms.TextInput(attrs={'class': 'form-control'}),
             'observaciones': forms.Textarea(attrs={'class': 'form-control'}),
         }
+
+
+class MensajeriaForm(forms.Form):
+    fecha_inicio = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}))    
+    fecha_fin = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}))     
+
+
