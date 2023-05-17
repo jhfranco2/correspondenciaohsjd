@@ -197,4 +197,5 @@ def generar_pdf(data):
     response = HttpResponse(buffer.getvalue(), content_type='application/pdf')
     return response
 
-           
+def generar_reporte_auditoria(request):
+    return render(request,'reportes/auditoria.html')           

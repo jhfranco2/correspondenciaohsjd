@@ -10,4 +10,5 @@ urlpatterns = [
    path('eliminar/<int:id>/', views.eliminar, name='eliminar'),
    path('reportes', views.reportes,name='reportes'),
    path('generar-reporte-mensajeria',views.generar_reporte_mensajeria,name='generar-reporte-mensajeria'),
+   path('generar-reporte-auditoria',views.generar_reporte_auditoria,name="generar-reporte-auditoria")
 ]
