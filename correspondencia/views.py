@@ -5,7 +5,7 @@ from django.core.paginator import Paginator
 from django.contrib import messages
 from correspondencia.forms import AuditoriaForm, LibroForm, MensajeriaForm
 from correspondencia.models import Libro,Ci,Zand,Gand
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle,Paragraph
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle,Paragraph,Spacer
 from reportlab.lib.pagesizes import letter,inch,landscape
 from reportlab.lib import colors
 from reportlab.lib.styles import ParagraphStyle
@@ -205,8 +205,10 @@ def generar_reporte_auditoria(request):
                     str(cumplio_plazo)
                      ]
                 data.append(row)
-            colWidths=[22, 30, 55, 30, 30, 55, 55, 110, 55, 148.5, 160, 30]   
-            return generar_pdf(encabezado+data,colWidths)           
+            colWidths=[22, 30, 55, 30, 30, 55, 55, 110, 55, 148.5, 160, 30] 
+            tabla_auditoria = [['Oportunas','No Oportunas','%'],['350','3','0.8'],['Total','353','']] 
+            response = generar_pdf_auditoria(encabezado+data,colWidths,tabla_auditoria) 
+            return  response         
     else:
         form = AuditoriaForm()
     return render(request,"reportes/auditoria.html",{'form':form})        
@@ -264,3 +266,68 @@ def generar_pdf(data,colWidths):
     
     response = HttpResponse(buffer.getvalue(), content_type='application/pdf')
     return response        
+
+
+def generar_pdf_auditoria(data,colWidths,data2):
+    # Crear un objeto de buffer de BytesIO
+    buffer = BytesIO()
+    
+    #dimensiones de la pagina 
+    page_size = landscape(letter)
+
+    # Calcular la altura de cada fila para que haya un máximo de 7 filas por página
+    max_rows_per_page = 8
+    row_height = (page_size[1] - inch) / max_rows_per_page
+
+    #estilos de los parrafos
+    styles = getSampleStyleSheet()
+    styles.add(ParagraphStyle(name='Center', alignment=TA_CENTER, fontSize=8))
+
+    #Crear una lista de objetos Paragraph para cada celda de la tabla
+    data1_paragraphs = []
+
+    #recorrer las filas y columnas para asignarles el estilo de párrafo
+    for row in data:
+        row_paragraphs = []
+        for cell in row:
+            row_paragraphs.append(Paragraph(cell, styles['Center']))
+        data1_paragraphs.append(row_paragraphs) 
+    # Crear la tabla
+    tabla = Table(data1_paragraphs, colWidths, rowHeights=row_height)
+
+    # Estilo de la tabla
+    estilo_tabla = TableStyle([
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
+        ('BOX', (0, 0), (-1, -1), 1, colors.black)
+    ])
+    
+    # Modificar el estilo de la tabla basado en el valor de la última columna
+    for i in range(1, len(data)):
+        if data[i][-1] == '1':
+         estilo_tabla.add('BACKGROUND', (-1, i), (-1, i), colors.green)
+        elif data[i][-1] == '0':
+         estilo_tabla.add('BACKGROUND', (-1, i), (-1, i), colors.red)
+ 
+    
+    # Aplicar el estilo a la tabla
+    tabla.setStyle(estilo_tabla)
+
+    # Generar el objeto canvas
+    doc = SimpleDocTemplate(buffer, pagesize=page_size, topMargin=0)
+
+    contenido = []
+    contenido.append(tabla)
+    tabla_auditoria = Table(data2,colWidths=[200,200,50],hAlign='LEFT')
+    estilo_tabla_auditoria = TableStyle([
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
+        ('BOX', (0, 0), (-1, -1), 1, colors.black),
+       
+    ])
+    tabla_auditoria.setStyle(estilo_tabla_auditoria)
+    contenido.append(Spacer(1, 20))  # Agregar un espacio de 20 puntos después de la primera tabla
+    contenido.append(tabla_auditoria)
+    doc.build(contenido)
+    response = HttpResponse(buffer.getvalue(), content_type='application/pdf')
+    return response        
+
+
