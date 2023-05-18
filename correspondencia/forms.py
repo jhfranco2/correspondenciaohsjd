@@ -2,7 +2,6 @@ from django import forms
 
 from correspondencia.models import Libro
 
-
 class LibroForm(forms.ModelForm):
     SIGLA_CHOICES = (
         ('C','CI'),
@@ -60,3 +59,6 @@ class MensajeriaForm(forms.Form):
     fecha_fin = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}))     
 
 
+class AuditoriaForm(forms.Form):
+    fecha_inicio = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}))    
+    fecha_fin = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}))     
