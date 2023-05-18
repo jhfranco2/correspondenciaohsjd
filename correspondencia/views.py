@@ -206,7 +206,23 @@ def generar_reporte_auditoria(request):
                      ]
                 data.append(row)
             colWidths=[22, 30, 55, 30, 30, 55, 55, 110, 55, 148.5, 160, 30] 
-            tabla_auditoria = [['Oportunas','No Oportunas','%'],['350','3','0.8'],['Total','353','']] 
+            oportunas = 0
+            no_oportunas = 0
+            porcentaje_oportunas = 0
+            porcentaje_no_oportunas = 0
+            for tabla in data:
+                if tabla[-1] == '0':
+                    no_oportunas +=1
+                elif tabla[-1] == '1':
+                    oportunas +=1
+            try:
+                porcentaje_oportunas = oportunas/no_oportunas*100
+                porcentaje_no_oportunas = no_oportunas/oportunas*100
+            except ZeroDivisionError:
+                porcentaje_oportunas = 100
+                porcentaje_no_oportunas = 100
+            
+            tabla_auditoria = [['Oportunas','No Oportunas','%'],[str(oportunas),str(no_oportunas),str(porcentaje_no_oportunas)],['','',str(porcentaje_oportunas)],['Total',str(oportunas + no_oportunas),'']] 
             response = generar_pdf_auditoria(encabezado+data,colWidths,tabla_auditoria) 
             return  response         
     else:
