@@ -183,7 +183,7 @@ def generar_reporte_auditoria(request):
                 if importancia == 'A':
                     plazo_horas = 4
                 elif importancia == 'M':
-                    plazo_horas == 24
+                    plazo_horas = 24
                 elif importancia == 'B':
                     plazo_horas = 72    
                 else:
