@@ -9,12 +9,26 @@ class Proceso(models.Model):
     def __str__(self):
         return self.nombre_proceso 
      
+def validate_unique_or_empty(value):
+    """
+    Valida que el campo sea único cuando no esté vacío.
+    """
+    if value.strip() != '':
+        if Libro.objects.filter(numero_documento=value).exists():
+            raise ValidationError('Ya hay un documento con ese número.')
+             
 # Modelo del libro
 class Libro(models.Model):
     sigla = models.CharField(max_length=1,default='C')
     tipo_documento = models.CharField(max_length=1,default='',null=True)
     proveedor = models.CharField(max_length=28,default='')
-    numero_documento = models.CharField(max_length=48,default='',null=True,blank=True)
+    numero_documento = models.CharField(
+        max_length=48,
+        default='',
+        null=True,
+        blank=True,
+        validators=[validate_unique_or_empty]
+    )
     fecha_solicitud = models.DateTimeField(auto_now_add=False,blank=True,null=True)
     fecha_entrada = models.DateTimeField(auto_now_add=False,blank=False,null=False)
     remitente_destinatario = models.CharField(max_length=1)
