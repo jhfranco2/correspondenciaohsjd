@@ -1,3 +1,4 @@
+import base64
 from io import BytesIO
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
@@ -187,9 +188,9 @@ def generar_reporte_auditoria(request):
                 elif importancia == 'B':
                     plazo_horas = 72    
                 else:
-                    plazo_horas = 0
+                    plazo_horas = float('inf')
                 # Verificar si se cumplió el plazo
-                cumplio_plazo = 1 if horas <= plazo_horas else 0   
+                cumplio_plazo = 1 if importancia == 'S' else (1 if horas <= plazo_horas else 0)  
                 row = [
                     str(id_relacionado),
                     libro.sigla if libro.sigla is not None else '',
@@ -216,15 +217,16 @@ def generar_reporte_auditoria(request):
                 elif tabla[-1] == '1':
                     oportunas +=1
             try:
-                porcentaje_oportunas = oportunas/no_oportunas*100
-                porcentaje_no_oportunas = no_oportunas/oportunas*100
+                porcentaje_oportunas = oportunas/(oportunas+no_oportunas)*100
+                porcentaje_no_oportunas = no_oportunas/(oportunas+no_oportunas)*100
             except ZeroDivisionError:
                 porcentaje_oportunas = 100
                 porcentaje_no_oportunas = 100
             
-            tabla_auditoria = [['Oportunas','No Oportunas','%'],[str(oportunas),str(no_oportunas),str(porcentaje_no_oportunas)],['','',str(porcentaje_oportunas)],['Total',str(oportunas + no_oportunas),'']] 
-            response = generar_pdf_auditoria(encabezado+data,colWidths,tabla_auditoria) 
-            return  response         
+            tabla_auditoria = [['Oportunas','No Oportunas','%'],[str(oportunas),str(no_oportunas),str(round(porcentaje_no_oportunas,2))],['','',str(round(porcentaje_oportunas,2))],['Total',str(oportunas + no_oportunas),'']] 
+            pdf_data = generar_pdf_auditoria(encabezado + data, colWidths, tabla_auditoria)
+            pdf_data_base64 = base64.b64encode(pdf_data.getvalue()).decode('utf-8')
+            return render(request, "reportes/auditoria.html", {'form': form, 'pdf_data': pdf_data_base64})        
     else:
         form = AuditoriaForm()
     return render(request,"reportes/auditoria.html",{'form':form})        

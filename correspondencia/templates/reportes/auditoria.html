@@ -1,9 +1,57 @@
 {% extends 'base.html' %}
-{% block titulo%}reporte auditoria{% endblock %}
+{% block titulo %}reporte auditoria{% endblock %}
 {% block contenido %}
-<form method="post">
+  <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit" class="btn btn-primary">Guardar</button>
-</form>
+  </form>
+  <div class="container">
+    <div id="pdfViewer"></div>
+  </div>
+  {% load static %}
+  <script src="{% static 'js/pdfs/build/pdf.js' %}"></script>
+  <script>
+    // Obtener los datos del PDF generado en memoria
+    var pdfData = atob("{{ pdf_data|safe }}");
+
+    // Cargar el PDF en el visor
+    var loadingTask = pdfjsLib.getDocument({ data: pdfData });
+    loadingTask.promise.then(function (pdf) {
+        var numPages = pdf.numPages;
+        var pageNumber = 1;
+
+        // Función para cargar la página actual
+        function renderPage(page) {
+            var scale = 1.5;
+            var viewport = page.getViewport({ scale: scale });
+
+            // Preparar lienzo para renderizar la página
+            var canvas = document.createElement('canvas');
+            var context = canvas.getContext('2d');
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+
+            // Renderizar la página en el lienzo
+            var renderContext = {
+                canvasContext: context,
+                viewport: viewport
+            };
+            page.render(renderContext).promise.then(function () {
+                // Agregar el lienzo al visor
+                var viewerContainer = document.getElementById('pdfViewer');
+                viewerContainer.appendChild(canvas);
+
+                // Cargar la siguiente página si existe
+                if (pageNumber < numPages) {
+                    pageNumber++;
+                    pdf.getPage(pageNumber).then(renderPage);
+                }
+            });
+        }
+
+        // Cargar la primera página
+        pdf.getPage(pageNumber).then(renderPage);
+    });
+  </script>
 {% endblock %}
