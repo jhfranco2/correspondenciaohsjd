@@ -1,4 +1,5 @@
 from django.db import models
+from django.forms import ValidationError
 
 
 #modelo proceso
@@ -7,14 +8,13 @@ class Proceso(models.Model):
 
     def __str__(self):
         return self.nombre_proceso 
- 
-
+     
 # Modelo del libro
 class Libro(models.Model):
     sigla = models.CharField(max_length=1,default='C')
     tipo_documento = models.CharField(max_length=1,default='',null=True)
     proveedor = models.CharField(max_length=28,default='')
-    numero_documento = models.CharField(default='',max_length=48, unique=True, error_messages={'unique':'ya hay un documento con ese número'})
+    numero_documento = models.CharField(max_length=48,default='',null=True,blank=True)
     fecha_solicitud = models.DateTimeField(auto_now_add=False,blank=True,null=True)
     fecha_entrada = models.DateTimeField(auto_now_add=False,blank=False,null=False)
     remitente_destinatario = models.CharField(max_length=1)

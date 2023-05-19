@@ -31,14 +31,13 @@ class LibroForm(forms.ModelForm):
     importancia = forms.ChoiceField(choices=IMPORTANCIA_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
     tipo_documento = forms.ChoiceField(choices=TDOCUMENTO_CHOICES,widget=forms.Select(attrs={'class': 'form-control'}))
     remitente_destinatario = forms.ChoiceField(choices=REMITENTE_DESTINATARIO_CHOICES,widget=forms.Select(attrs={'class': 'form-control'}))
-    
 
     class Meta:
         model = Libro
         fields = '__all__'
         widgets = {
-            'numero_documento' : forms.TextInput(attrs={'class': 'form-control'}),
             'proveedor': forms.TextInput(attrs={'class':'form-control'}),
+            'numero_documento': forms.TextInput(attrs={'class':'form-control'}),
             'fecha_solicitud': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
             'fecha_entrada':  forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
             'remitente_destinario': forms.Select(attrs={'class':'form-control'}),
