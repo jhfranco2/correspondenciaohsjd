@@ -21,7 +21,7 @@ def validate_unique_or_empty(value):
 class Libro(models.Model):
     sigla = models.CharField(max_length=1,default='C')
     tipo_documento = models.CharField(max_length=1,default='',null=True)
-    proveedor = models.CharField(max_length=28,default='')
+    proveedor = models.CharField(max_length=28,default='',null=True,blank=True)
     numero_documento = models.CharField(
         max_length=48,
         default='',
